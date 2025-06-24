@@ -26,6 +26,16 @@ class Player(CircleShape):
             self.rotation += PLAYER_TURN_SPEED * dt
         else:
             print('Invalid directions')
+    
+    def move(self, dt, direction):
+        if direction == 'f':
+            forward = pygame.Vector2(0, 1).rotate(self.rotation)
+            self.position += forward * PLAYER_SPEED * dt
+        elif direction == 'b':
+            backward = pygame.Vector2(0, -1).rotate(self.rotation)
+            self.position += backward * PLAYER_SPEED * dt
+        else:
+            print('Invalid directions')
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
@@ -34,3 +44,7 @@ class Player(CircleShape):
             self.rotate(dt, 'l')
         if keys[pygame.K_d]:
             self.rotate(dt, 'r')
+        if keys[pygame.K_w]:
+            self.move(dt, 'f')
+        if keys[pygame.K_s]:
+            self.move(dt, 'b')
