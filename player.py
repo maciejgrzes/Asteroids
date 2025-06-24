@@ -18,4 +18,19 @@ class Player(CircleShape):
         b = self.position - forward * self.radius - right
         c = self.position - forward * self.radius + right
         return [a, b, c]
+    
+    def rotate(self, dt, direction):
+        if direction == 'l':
+            self.rotation -= PLAYER_TURN_SPEED * dt
+        elif direction == 'r':
+            self.rotation += PLAYER_TURN_SPEED * dt
+        else:
+            print('Invalid directions')
 
+    def update(self, dt):
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_a]:
+            self.rotate(dt, 'l')
+        if keys[pygame.K_d]:
+            self.rotate(dt, 'r')
