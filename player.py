@@ -18,6 +18,7 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.cooldown = 0
+        self.shot_sound = pygame.mixer.Sound('assets/shot.mp3')
 
     def draw(self, screen, color):
         pygame.draw.polygon(screen, color, self.triangle(), 2)
@@ -53,6 +54,7 @@ class Player(CircleShape):
         self.cooldown = PLAYER_SHOOT_COOLDOWN
         shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
         shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+        self.shot_sound.play()
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt

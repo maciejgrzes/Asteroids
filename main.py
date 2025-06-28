@@ -5,7 +5,6 @@ from asteroids import Asteroid
 from asteroidfield import AsteroidField
 
 
-
 def main():
     player_health = 15
     collision_time = 0
@@ -23,7 +22,10 @@ def main():
     
     health_text = font.render('Lives: ' + str(player_health//3), True, 'white', 'black')
     health_text_rect = health_text.get_rect()
-    health_text_rect.center = (80, 30)
+    health_text_rect.center = (80, SCREEN_HEIGHT - 30)
+    
+    explosion = pygame.mixer.Sound('assets/explosion.mp3')
+    death = pygame.mixer.Sound('assets/death.mp3')
 
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -58,6 +60,7 @@ def main():
                 player.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
                 if player_health <= 0:
                     screen.blit(game_over, game_over_rect)
+                    death.play()
                     pygame.display.flip()
                     pygame.time.delay(2000)
                     return
@@ -65,6 +68,7 @@ def main():
         for ass in asteroids:
             for shot in bullets:
                 if ass.colision(shot):
+                    explosion.play()
                     ass.split()
                     shot.kill()
 
@@ -72,11 +76,16 @@ def main():
 
         for obj in drawable:
             obj.draw(screen, 'white')
+        
+        for bullet in bullets:
+            if bullet.position.x < 0 or bullet.position.x > SCREEN_WIDTH or bullet.position.y < 0 or bullet.position.y > SCREEN_HEIGHT:
+                bullet.kill()
 
         screen.blit(health_text, health_text_rect)
         pygame.display.flip()
 
         dt = clock.tick(TARGET_FRAMERATE) / 1000
+
 
 if __name__ == "__main__":
     main()
