@@ -26,7 +26,8 @@ def main():
     
     explosion = pygame.mixer.Sound('assets/explosion.mp3')
     death = pygame.mixer.Sound('assets/death.mp3')
-
+    hurt = pygame.mixer.Sound('assets/hurt.mp3')
+    
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -58,6 +59,7 @@ def main():
                 collision_immune = True
                 collision_time = pygame.time.get_ticks()
                 player.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+                hurt.play()
                 if player_health <= 0:
                     screen.blit(game_over, game_over_rect)
                     death.play()
