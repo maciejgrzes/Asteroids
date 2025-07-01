@@ -1,7 +1,7 @@
 import pygame
 import random
 from circleshape import CircleShape
-from constants import ASTEROID_MIN_RADIUS
+from constants import *
 
 class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
@@ -29,3 +29,19 @@ class Asteroid(CircleShape):
         asteroid = Asteroid(self.position.x, self.position.y, new_radius)
         asteroid.velocity = b * 1.2
 
+
+class HealPack(CircleShape):
+    def __init__(self, x, y, radius):
+        super().__init__(x, y, radius)
+        self.position = pygame.Vector2(x, y)
+        self.size = 30
+        self.thickness = 6
+        self.color = (0, 255, 0)
+        
+    def draw(self, screen, color):
+        vertical = pygame.Rect(self.position.x - self.thickness // 2, self.position.y - self.size // 2, self.thickness, self.size)
+
+        horizontal = pygame.Rect(self.position.x - self.size // 2, self.position.y - self.thickness // 2, self.size, self.thickness)
+
+        pygame.draw.rect(screen, self.color, vertical)
+        pygame.draw.rect(screen, self.color, horizontal)

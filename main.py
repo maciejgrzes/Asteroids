@@ -1,15 +1,16 @@
 import pygame
 from constants import *
-from player import Player, Shot
-from asteroids import Asteroid
-from asteroidfield import AsteroidField
+from player import *
+from asteroids import *
+from asteroidfield import *
 
 
 def main():
-    player_health = 15
+    player_health = 3
     collision_time = 0
     collision_immune = False
     dt = 0
+    health_color = 'green'
     
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -20,23 +21,26 @@ def main():
     game_over_rect = game_over.get_rect()
     game_over_rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     
-    health_text = font.render('Lives: ' + str(player_health//3), True, 'white', 'black')
+    health_text = font.render('Lives: ' + str(player_health), True, health_color, 'black')
     health_text_rect = health_text.get_rect()
     health_text_rect.center = (80, SCREEN_HEIGHT - 30)
     
     explosion = pygame.mixer.Sound('assets/explosion.mp3')
     death = pygame.mixer.Sound('assets/death.mp3')
     hurt = pygame.mixer.Sound('assets/hurt.mp3')
+    health_up = pygame.mixer.Sound('assets/heal.mp3')
     
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
+    heals = pygame.sprite.Group()
 
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
     Shot.containers = (bullets, updatable, drawable)
     Player.containers = (updatable, drawable)
+    HealPack.containers = (drawable, heals)
 
     asteroid_field = AsteroidField()
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -54,13 +58,17 @@ def main():
         
         for obj in asteroids:
             if obj.colision(player) and collision_immune == False:
-                player_health -= 3
-                health_text = font.render('Lives: ' + str(player_health//3), True, 'white', 'black')
+                player_health -= 1
+                if player_health < 1:
+                    health_color = 'red'
+                elif player_health > 0 and health_color != 'green':
+                    health_color = 'green'
+                health_text = font.render('Lives: ' + str(player_health), True, health_color, 'black')
                 collision_immune = True
                 collision_time = pygame.time.get_ticks()
                 player.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
                 hurt.play()
-                if player_health <= 0:
+                if player_health < 0:
                     screen.blit(game_over, game_over_rect)
                     death.play()
                     pygame.display.flip()
@@ -72,7 +80,18 @@ def main():
                 if ass.colision(shot):
                     explosion.play()
                     ass.split()
+                    if random.random() < 0.15 and player_health < 3 and len(heals) < 3:
+                        heal = HealPack(ass.position.x, ass.position.y, ass.radius)
                     shot.kill()
+        
+        for h in heals:
+            if h.colision(player):
+                h.kill()
+                player_health += 1
+                health_up.play()
+                if player_health > 0 and health_color != 'green':
+                    health_color = 'green'
+                health_text = font.render('Lives: ' + str(player_health), True, health_color, 'black')
 
         screen.fill("black")
 
