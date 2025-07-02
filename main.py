@@ -11,7 +11,7 @@ def main():
     collision_immune = False
     dt = 0
     health_color = 'green'
-    
+
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
@@ -20,16 +20,16 @@ def main():
     game_over = font.render('GAME OVER', True, 'red', 'black')
     game_over_rect = game_over.get_rect()
     game_over_rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-    
+
     health_text = font.render('Lives: ' + str(player_health), True, health_color, 'black')
     health_text_rect = health_text.get_rect()
     health_text_rect.center = (80, SCREEN_HEIGHT - 30)
-    
+
     explosion = pygame.mixer.Sound('assets/explosion.mp3')
     death = pygame.mixer.Sound('assets/death.mp3')
     hurt = pygame.mixer.Sound('assets/hurt.mp3')
     health_up = pygame.mixer.Sound('assets/heal.mp3')
-    
+
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -47,7 +47,7 @@ def main():
 
 
     while True:
-        if collision_immune and  (pygame.time.get_ticks() - collision_time > 2000):
+        if collision_immune and (pygame.time.get_ticks() - collision_time > 2000):
             collision_immune = False
 
         for event in pygame.event.get():
@@ -55,7 +55,7 @@ def main():
                 return
 
         updatable.update(dt)
-        
+
         for obj in asteroids:
             if obj.colision(player) and collision_immune == False:
                 player_health -= 1
@@ -74,7 +74,7 @@ def main():
                     pygame.display.flip()
                     pygame.time.delay(2000)
                     return
-        
+
         for ass in asteroids:
             for shot in bullets:
                 if ass.colision(shot):
@@ -83,7 +83,7 @@ def main():
                     if random.random() < 0.15 and player_health < 3 and len(heals) < 3:
                         heal = HealPack(ass.position.x, ass.position.y, ass.radius)
                     shot.kill()
-        
+
         for h in heals:
             if h.colision(player):
                 h.kill()
@@ -97,7 +97,7 @@ def main():
 
         for obj in drawable:
             obj.draw(screen, 'white')
-        
+
         for bullet in bullets:
             if bullet.position.x < 0 or bullet.position.x > SCREEN_WIDTH or bullet.position.y < 0 or bullet.position.y > SCREEN_HEIGHT:
                 bullet.kill()
@@ -110,4 +110,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
