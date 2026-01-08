@@ -11,6 +11,7 @@ def main():
     collision_immune = False
     dt = 0
     health_color = 'green'
+    score = 0
 
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -24,6 +25,10 @@ def main():
     health_text = font.render('Lives: ' + str(player_health), True, health_color, 'black')
     health_text_rect = health_text.get_rect()
     health_text_rect.center = (80, SCREEN_HEIGHT - 30)
+
+    score_text = font.render('Score: ' + str(score), True, 'white', 'black')
+    score_text_rect = score_text.get_rect()
+    score_text_rect.center = (SCREEN_WIDTH // 2, 30)
 
     explosion = pygame.mixer.Sound('assets/explosion.mp3')
     death = pygame.mixer.Sound('assets/death.mp3')
@@ -78,6 +83,13 @@ def main():
         for ass in asteroids:
             for shot in bullets:
                 if ass.colision(shot):
+                    if ass.radius == 60:
+                        score += 1
+                    elif ass.radius == 40:
+                        score += 2
+                    elif ass.radius == 20:
+                        score += 3
+                    score_text = font.render('Score: ' + str(score), True, 'white', 'black')
                     explosion.play()
                     ass.split()
                     if random.random() < 0.15 and player_health < 3 and len(heals) < 3:
@@ -103,6 +115,7 @@ def main():
                 bullet.kill()
 
         screen.blit(health_text, health_text_rect)
+        screen.blit(score_text, score_text_rect)
         pygame.display.flip()
 
         dt = clock.tick(TARGET_FRAMERATE) / 1000
